@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
+from fastapi.middleware.cors import CORSMiddleware  #CORS
 
 import crud
 from database import engine, localSession
@@ -9,6 +10,21 @@ from models import Base
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+#ORIGENES PERMITIDOS FRONTEND #############################
+origin = [
+    #'http://localhost:3000' # damos acceso a nuestro BackEnd únicamente desde esta URL FrontEnd 
+    #'http://172.18.0.4:3000' # UNA VEZ LOS TRES CONTENEDORES CONECTADOS DESDE NUESTRA RED DOCKER SE ASIGNA A NUESTRO BACKEND LA IP DE NUESTRO FORNTEND
+    '*' # PARA DARA ACCESO ACUALQUIR IP PUBLICA
+]
+app.add_middleware(
+    CORSMiddleware, 
+    allow_origins=origin,
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*']
+)
+###########################################################
 
 def get_db():
     db = localSession()
